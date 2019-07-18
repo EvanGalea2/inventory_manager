@@ -37,3 +37,11 @@ class inventoryConnection:
         queryText = queryText + ';'
         #print(queryText)
         return self.query(queryText, True)
+
+    def getFields(self, tableName, condition):
+        queryText ="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'items'"
+        # queryText = 'show columns from %s' %(tableName)
+        if(condition is not None): #for example: you want to add "where id = 5"
+            queryText = queryText + ' ' + condition
+        queryText = queryText + ';'
+        return self.query(queryText, True)
