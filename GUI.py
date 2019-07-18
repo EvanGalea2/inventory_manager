@@ -13,37 +13,45 @@ mainText = StringVar()
 mainDisplayText = Label()
 
 #def updateMainDisplay():
-def populate(frame):
-    '''Put in some fake data'''
-    for row in range(100):
-        Label(frame, text="%s" % row, width=3, borderwidth="1",
-                 relief="solid").grid(row=row, column=0)
-        t="this is the second column for row %s" %row
-        Label(frame, text=t).grid(row=row, column=1)
+def populate(frame, query):
+    itemString = inventory.selectItems("items", query)
+    gridRow = 1
+    gridColumn = 0
+    fields = inventory.getFields("items", None)
+    for field in fields:
+        Label(frame, text = field, width = 10).grid(row = gridRow - 1, column = gridColumn)
+        gridColumn += 1
+    gridColumn = 0
+    for item in itemString:
+        for var in item:
+            Label(frame, text = var, width = 10).grid(row=gridRow, column=gridColumn)
+            gridColumn += 1
+        gridColumn = 0
+        gridRow += 1
+#buttons
+
+
 
 def onFrameConfigure(canvas):
     '''Reset the scroll region to encompass the inner frame'''
     canvas.configure(scrollregion=canvas.bbox("all"))
-
 canvas = Canvas(screen, borderwidth=0, background="#ffffff")
+
+mainMenu = Frame(background="RED").pack(side="top")
+fileButton = Button(mainMenu,text = "File", width = 10).pack(side = "top")
+editButton = Button(mainMenu,text="Edit", width = 10).pack(side="top")
 frame = Frame(canvas, background="#ffffff")
 vsb = Scrollbar(screen, orient="vertical", command=canvas.yview)
 canvas.configure(yscrollcommand=vsb.set)
 
 vsb.pack(side="right", fill="y")
-canvas.pack(side="left", fill="both", expand=True)
+canvas.pack(side="top", fill="both", expand=True)
 canvas.create_window((4,4), window=frame, anchor="nw")
 
 frame.bind("<Configure>", lambda event, canvas=canvas: onFrameConfigure(canvas))
 
-populate(frame)
+
+
+populate(frame, None)
 
 screen.mainloop()
-
-itemString = inventory.selectItems("items", None)
-print(type(itemString))
-#itemString = itemString[1:-1]#cut out the first and last character in the string
-#print(itemString)
-for i in itemString:
-    print(i)
-    print(type(i))
